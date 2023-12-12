@@ -1,6 +1,7 @@
 ﻿using Business.Abstracts;
 using Business.Dtos.Requests;
 using Business.Dtos.Requests.CategoryRequests;
+using Business.Dtos.Requests.ProductRequests;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,13 @@ namespace WebAPI.Controllers
         public CategoriesController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
+        }
+
+        [HttpGet("GetList")]
+        public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
+        {
+            var result = await _categoryService.GetListAsync(pageRequest);
+            return Ok(result);
         }
 
         [HttpPost("Add")]
@@ -37,10 +45,31 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetList")]
-        public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
+        [HttpPost("AddRange")]
+        public async Task<IActionResult> AddRangeAsync([FromBody] List<CreateCategoryRequest> createCategoryRequest)
         {
-            var result = await _categoryService.GetListAsync(pageRequest);
+            var result = await _categoryService.AddRangeAsync(createCategoryRequest);
+            return Ok(result);
+        }
+
+        [HttpPost("UpdateRange")]
+        public async Task<IActionResult> UpdateRangeAsync([FromBody] List<UpdateCategoryRequest> updateCategoryRequests)
+        {
+            var result = await _categoryService.UpdateRangeAsync(updateCategoryRequests);
+            return Ok(result);
+        }
+
+        [HttpPost("DeleteRange")]
+        public async Task<IActionResult> DeleteRangeAsync([FromBody] List<DeleteCategoryRequest> deleteCategoryRequests)
+        {
+            var result = await _categoryService.DeleteRangeAsync(deleteCategoryRequests);
+            return Ok(result);
+        }
+
+        [HttpPost("GetById")]
+        public async Task<IActionResult> GetById([FromBody] GetCategoryRequest getCategoryRequest)
+        {
+            var result = await _categoryService.GetById(getCategoryRequest);
             return Ok(result);
         }
     }

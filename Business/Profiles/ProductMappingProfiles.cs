@@ -18,14 +18,16 @@ namespace Business.Mapping
             CreateMap<CreateProductRequest, Product>().ReverseMap();
             CreateMap<Product, CreatedProductResponse>().ReverseMap();
 
-            CreateMap<Product, GetListedProductResponse>();
-            CreateMap<Paginate<Product>, Paginate<GetListedProductResponse>>();
+            CreateMap<Product, GetListedProductResponse>().ReverseMap();
+            CreateMap<Paginate<Product>, Paginate<GetListedProductResponse>>().ReverseMap();
 
-            CreateMap<UpdateProductRequest, Product>();
-            CreateMap<Product, UpdatedProductResponse>();
+            CreateMap<Product, GetProductResponse>().ReverseMap();
 
-            CreateMap<DeleteProductRequest, Product>();
-            CreateMap<Product, DeletedProductResponse>();
+            CreateMap<UpdateProductRequest, Product>().ReverseMap();
+            CreateMap<Product, UpdatedProductResponse>().ReverseMap();
+
+            CreateMap<DeleteProductRequest, Product>().ReverseMap();
+            CreateMap<Product, DeletedProductResponse>().ReverseMap();
 
             CreateMap<Product, GetListedProductResponse>()
                 .ForMember(destinationMember: p => p.CategoryId,

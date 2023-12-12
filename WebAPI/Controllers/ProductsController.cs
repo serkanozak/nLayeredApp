@@ -18,6 +18,13 @@ namespace WebAPI.Controllers
             _productService = productService;
         }
 
+        [HttpGet("GetList")]
+        public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
+        {
+            var result = await _productService.GetListAsync(pageRequest);
+            return Ok(result);
+        }
+
         [HttpPost("Add")]
         public async Task<IActionResult> Add([FromBody] CreateProductRequest createProductRequest)
         {
@@ -39,13 +46,32 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetList")]
-        public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
+        [HttpPost("AddRange")]
+        public async Task<IActionResult> AddRangeAsync([FromBody] List<CreateProductRequest> createProductRequest)
         {
-            var result = await _productService.GetListAsync(pageRequest);
+            var result = await _productService.AddRangeAsync(createProductRequest);
             return Ok(result);
         }
 
-        
+        [HttpPost("UpdateRange")]
+        public async Task<IActionResult> UpdateRangeAsync([FromBody] List<UpdateProductRequest> updateProductRequests)
+        {
+            var result = await _productService.UpdateRangeAsync(updateProductRequests);
+            return Ok(result);
+        }
+
+        [HttpPost("DeleteRange")]
+        public async Task<IActionResult> DeleteRangeAsync([FromBody] List<DeleteProductRequest> deleteProductRequests)
+        {
+            var result = await _productService.DeleteRangeAsync(deleteProductRequests);
+            return Ok(result);
+        }
+
+        [HttpPost("GetById")]
+        public async Task<IActionResult> GetById([FromBody] GetProductRequest getProductRequest)
+        {
+            var result = await _productService.GetById(getProductRequest);
+            return Ok(result);
+        }
     }
 }

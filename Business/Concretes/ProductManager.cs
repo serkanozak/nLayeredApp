@@ -68,15 +68,64 @@ namespace Business.Concretes
             //return paginate;
         }
 
+        public async Task<IEnumerable<CreatedProductResponse>> AddRangeAsync(IEnumerable<CreateProductRequest> createProductRequests)
+        {
+            List<Product> products = createProductRequests.Select(request => _mapper.Map<Product>(request)).ToList();
+
+            foreach (var product in products)
+            {
+                product.Id = Guid.NewGuid();
+            }
+
+            await _productDal.AddRangeAsync(products);
+
+            IEnumerable<CreatedProductResponse> createdProductResponses = products.Select(p => _mapper.Map<CreatedProductResponse>(p));
+
+            return createdProductResponses;
+        }
+
+        public async Task<ICollection<UpdatedProductResponse>> UpdateRangeAsync(ICollection<UpdateProductRequest> updateProductRequests)
+        {
+            ICollection<Product> entities = _mapper.Map<ICollection<Product>>(updateProductRequests);
+
+            await _productDal.UpdateRangeAsync(entities);
+
+            var updatedResponses = _mapper.Map<ICollection<UpdatedProductResponse>>(entities);
+
+            return updatedResponses;
+        }
+
+        public async Task<ICollection<DeletedProductResponse>> DeleteRangeAsync(ICollection<DeleteProductRequest> deleteProductRequests)
+        {
+            List<Product> products = deleteProductRequests.Select(request => _mapper.Map<Product>(request)).ToList();
+
+            // Silinecek ürünlerin Id gelecek.
+            var productIds = products.Select(p => p.Id).ToList();
+
+            // Ürünleri paginate olarak alıyoruz.
+            var paginatedProducts = await _productDal.GetListAsync(p => productIds.Contains(p.Id));
+
+            // Paginatetten sadece ürünleri çekiyoruz.
+            var productsToDelete = paginatedProducts.Items.ToList();
+
+            // Range e göre siliyoruz.
+            await _productDal.DeleteRangeAsync(productsToDelete);
+
+            var deletedResponses = _mapper.Map<ICollection<DeletedProductResponse>>(productsToDelete);
+
+            return deletedResponses;
+        }
+
+        public async Task<GetProductResponse> GetById(GetProductRequest getProductRequest)
+        {
+            Product getProduct = await _productDal.GetAsync(p => p.Id == getProductRequest.Id);
+            GetProductResponse productResponse = _mapper.Map<GetProductResponse>(getProduct);
+            return productResponse;
+        }
     }
 }
 
 //tobeto projesinde tüm crud operasyonları tüm nesneler için hazır olsun.
-
-
-
-
-
 
 
 
@@ -140,3 +189,27 @@ namespace Business.Concretes
 
 //return paginate;
 //----------------------------------------------------------------------------------------------
+
+
+
+
+//ICollection<Product> entitiesToDelete = _mapper.Map<ICollection<Product>>(deleteProductRequests);
+
+//await _productDal.DeleteRangeAsync(entitiesToDelete);
+
+//var deletedResponses = _mapper.Map<ICollection<DeletedProductResponse>>(entitiesToDelete);
+
+//return deletedResponses;
+
+//List<Product> products = deleteProductRequests.Select(request => _mapper.Map<Product>(request)).ToList();
+
+//foreach (var product in products)
+//{
+//    await _productDal.GetAsync(p => p.Id == product.Id);
+//}
+
+//await _productDal.DeleteRangeAsync(products);
+
+//var deletedResponses = _mapper.Map<ICollection<DeletedProductResponse>>(products);
+
+//return deletedResponses;
